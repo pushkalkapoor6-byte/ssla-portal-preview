@@ -109,19 +109,20 @@ ships:[{name:"ISF Meridian",type:"Container",imo:"9512345",owner:"Meridian Lines
 joined:"2026-04-12",left:"",port:"Singapore",
 officers:[{n:"K. Subramanian",r:"Second Engineer"},{n:"A. Dsouza",r:"Third Engineer"}]}],
 mods:{
-1:{state:"done", sent:"2026-05-02", result:{interest:5,band:"More than 90%",
+1:{state:"done", sent:"2026-05-02", declared:268, result:{interest:5,band:"More than 90%",
 note:"Good work. Your own readings throughout, and the escape routes were walked properly."}},
-2:{state:"done", sent:"2026-07-11", result:{interest:4,band:"71% to 90%",
+2:{state:"done", sent:"2026-07-11", declared:281, result:{interest:4,band:"71% to 90%",
 note:"Sound. Bunkering figures were taken from a transfer you attended, which is what we want."}},
-3:{state:"marking", sent:"2026-10-18", result:null},
-4:{state:"doing", sent:"", result:null},
-5:{state:"not", sent:"", result:null},
-6:{state:"not", sent:"", result:null}
+3:{state:"marking", sent:"2026-10-18", declared:322, result:null},
+4:{state:"doing", sent:"", declared:188, result:null},
+5:{state:"not", sent:"", declared:null, result:null},
+6:{state:"not", sent:"", declared:null, result:null}
 }
 };
 var CANT=[
 {mod:4,ref:"A.11.3",why:"No homogeniser fitted on this ship."},
-{mod:4,ref:"A.22.2",why:"Gas welding not carried on board. Electric welding done."}
+{mod:4,ref:"A.22.2",why:"Gas welding not carried on board. Electric welding done."},
+{mod:3,ref:"B.7.2",why:"Ship was never in a ballast condition deep enough to take the readings."}
 ];
 var REDO=[
 {id:1,mod:3,page:73,state:"todo",
@@ -151,7 +152,7 @@ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
 var mod=function(i){for(var k=0;k<MODULES.length;k++)if(MODULES[k].id===i)return MODULES[k];};
 var STATE={done:["Marked","t-ok"],marking:["With your mentor","t-wait"],
 doing:["You are on this one","t-none"],not:["Not started","t-none"]};
-var role="cand", step=1;
+var role="cand", step=1, sendMod=4;
 var ROLES=[["cand","Candidate"],["mentor","Mentor"],["company","Company"],["admin","ISF admin"]];
 var STEPS={
 cand:[["Your ship","Fill this in first"],
@@ -226,13 +227,21 @@ function f(label,val,type){
 return '<div class="field"><label>'+E(label)+'</label>'+
 '<input type="'+(type||"text")+'" value="'+E(val)+'"></div>';
 }
+function pctText(){
+var cur=mod(sendMod), d=me.mods[sendMod].declared;
+if(d==null||d==="") return "Enter a number";
+var p=Math.round(d/cur.tasks*100);
+return "About "+p+"% of this module.";
+}
 function send(){
+var cur=mod(sendMod), st=me.mods[sendMod];
 var opts=MODULES.map(function(m){
 var s=me.mods[m.id], lab="Module "+m.id+" — "+m.name;
 if(s.state==="done") lab+="  (already marked)";
 if(s.state==="marking") lab+="  (with your mentor)";
-return '<option value="'+m.id+'"'+(m.id===4?" selected":"")+'>'+E(lab)+'</option>';
+return '<option value="'+m.id+'"'+(m.id===sendMod?" selected":"")+'>'+E(lab)+'</option>';
 }).join("");
+var rows=CANT.filter(function(c){return c.mod===sendMod;});
 return '<div class="card"><h2>Send a module to your mentor</h2>'+
 '<p>Send one module at a time, in order. Your mentor marks it and releases the next one.</p>'+
 '<div class="field" style="margin-top:18px"><label>Which module are you sending?</label>'+
@@ -242,16 +251,25 @@ return '<div class="card"><h2>Send a module to your mentor</h2>'+
 '<li>Your training officer has checked and signed it.</li>'+
 '<li>Any sketches are on separate sheets, marked with the task number.</li>'+
 '<li>Scan the whole book in order, as one PDF.</li></ol></div>'+
+'<div class="field"><label>How many tasks did you complete in Module '+sendMod+'?</label>'+
+'<div class="grid2"><input id="count" type="number" min="0" max="'+cur.tasks+'" '+
+'value="'+(st.declared==null?"":st.declared)+'" placeholder="Number of tasks you answered">'+
+'<div id="pcnt" style="display:flex;align-items:center;color:var(--ink2);font-size:15px">'+pctText()+'</div></div>'+
+'<p class="hint">Module '+sendMod+' has '+cur.tasks+' tasks in the book. Count the ones you have '+
+'actually answered and your officer has signed. Your mentor checks this against your book, so do '+
+'not guess high.</p></div>'+
 '<div class="field"><label>Your scanned module</label>'+
 '<input type="file"><p class="hint">One PDF. If it is too large, split it in two and send both.</p></div>'+
 '<button class="btn" data-act="sent">Send to my mentor</button></div>'+
-'<div class="card"><h3>Anything you could not do?</h3>'+
+'<div class="card"><h3>Tasks you could not do in Module '+sendMod+'</h3>'+
 '<p>If a task cannot be done on your ship — the equipment is not fitted, or the job did not come up '+
-'during your time on board — list it here with the reason. Your mentor needs to know, otherwise it '+
-'looks like you simply left it out.</p>'+
-CANT.filter(function(c){return c.mod===4;}).map(function(c){
+'during your time on board — list it here with the reason. These stay with Module '+sendMod+'. '+
+'Your mentor needs to know, otherwise it looks like you simply left it out.</p>'+
+(rows.length
+? rows.map(function(c){
 return '<div class="grid2" style="margin-top:12px"><input value="'+E(c.ref)+'" placeholder="Task number">'+
-'<input value="'+E(c.why)+'" placeholder="Why you could not do it"></div>';}).join("")+
+'<input value="'+E(c.why)+'" placeholder="Why you could not do it"></div>';}).join("")
+: '<p class="hint" style="margin-top:12px">Nothing listed for this module yet.</p>')+
 '<div class="grid2" style="margin-top:12px"><input placeholder="Task number, for example A.6.4">'+
 '<input placeholder="Why you could not do it"></div>'+
 '<div style="margin-top:12px"><button class="btn ghost" data-act="addcant">Add another</button></div></div>'+
@@ -259,15 +277,22 @@ return '<div class="grid2" style="margin-top:12px"><input value="'+E(c.ref)+'" p
 '<p>How much you completed is decided by your mentor when they read your book — it is not counted '+
 'automatically. Until a module is marked, it just shows where it is.</p>'+
 '<table style="margin-top:14px"><thead><tr>'+
-'<th>Module</th><th>Tasks in the book</th><th>Sent on</th><th>Where it is</th>'+
-'<th>How much you completed</th></tr></thead><tbody>'+
-MODULES.map(function(m){var s=me.mods[m.id],st=STATE[s.state];
+'<th>Module</th><th>Tasks in the book</th><th>You reported</th><th>Could not do</th>'+
+'<th>Sent on</th><th>Where it is</th><th>Mentor says</th></tr></thead><tbody>'+
+MODULES.map(function(m){var s=me.mods[m.id],stt=STATE[s.state];
+var nc=CANT.filter(function(c){return c.mod===m.id;}).length;
 return '<tr><td><b>Module '+m.id+'</b><br><span style="color:var(--ink2);font-size:14px">'+E(m.name)+'</span></td>'+
 '<td style="color:var(--ink2)">'+m.tasks+'</td>'+
-'<td>'+(s.sent?E(s.sent):"&mdash;")+'</td><td><span class="tag '+st[1]+'">'+st[0]+'</span></td>'+
+'<td>'+(s.declared==null?'<span style="color:var(--mute)">&mdash;</span>'
+:'<b>'+s.declared+'</b><br><span style="color:var(--ink2);font-size:13px">'+
+Math.round(s.declared/m.tasks*100)+'%</span>')+'</td>'+
+'<td>'+(nc?nc+(nc===1?" task":" tasks"):'<span style="color:var(--mute)">None</span>')+'</td>'+
+'<td>'+(s.sent?E(s.sent):"&mdash;")+'</td><td><span class="tag '+stt[1]+'">'+stt[0]+'</span></td>'+
 '<td>'+(s.result?'<b>'+E(s.result.band)+'</b>':'<span style="color:var(--mute)">Not marked yet</span>')+
 '</td></tr>';
-}).join("")+'</tbody></table></div>';
+}).join("")+'</tbody></table>'+
+'<p class="hint" style="margin-top:12px"><b>You reported</b> is your own count. <b>Mentor says</b> '+
+'is the band your mentor decides after reading your book. They are not the same thing.</p></div>';
 }
 function redo(){
 var open=REDO.filter(function(r){return r.state!=="done";}).length;
@@ -328,15 +353,23 @@ if(step===2){
 return '<div class="card"><h2>Mark a module</h2>'+
 '<p>Arjun Mehta — Module 3, Machinery and Ship Construction. Sent 18 Oct 2026.</p></div>'+
 '<div class="card"><div class="note" style="margin-bottom:18px"><b>You decide how much was completed.</b>'+
-'<p style="margin-top:6px">Nothing counts the tasks for you — the book is handwritten and scanned. '+
-'Read through it and judge which band it falls in, the same way you would with the paper sheet.</p></div>'+
+'<p style="margin-top:6px">The candidate reports their own count — nothing is counted from the scan. '+
+'Check it against the book and judge the band yourself, as you would on the paper sheet.</p></div>'+
+'<div class="field"><label>What the candidate reported</label>'+
+'<div style="border:1px solid var(--line);border-radius:8px;padding:12px;font-size:15px">'+
+'<b>'+me.mods[3].declared+' of '+mod(3).tasks+' tasks</b> &mdash; about '+
+Math.round(me.mods[3].declared/mod(3).tasks*100)+'% of the module.</div>'+
+'<p class="hint">Their figure, not a measured one.</p></div>'+
 '<div class="field"><label>How much of the module was completed</label>'+
 '<select><option>More than 90%</option><option selected>71% to 90%</option>'+
 '<option>51% to 70%</option><option>41% to 50%</option><option>Less than 40%</option></select></div>'+
 '<div class="field"><label>Tasks the candidate said they could not do</label>'+
 '<div style="border:1px solid var(--line);border-radius:8px;padding:12px">'+
-CANT.map(function(c){return '<div style="padding:5px 0;font-size:15px">'+
-'<b>'+E(c.ref)+'</b> &mdash; '+E(c.why)+'</div>';}).join("")+
+(CANT.filter(function(c){return c.mod===3;}).length
+? CANT.filter(function(c){return c.mod===3;}).map(function(c){
+return '<div style="padding:5px 0;font-size:15px">'+
+'<b>'+E(c.ref)+'</b> &mdash; '+E(c.why)+'</div>';}).join("")
+: '<span style="color:var(--ink2);font-size:15px">None listed.</span>')+
 '</div><p class="hint">Check these against the ship before you hold them against the candidate.</p></div>'+
 '<div class="field"><label>Interest shown in learning</label>'+
 '<select><option>5 — very high</option><option selected>4 — high</option><option>3 — fair</option>'+
@@ -430,12 +463,23 @@ officers:[{n:"",r:""}]});
 shell(); return;
 }
 if(a==="addoff"){me.ships[0].officers.push({n:"",r:""});shell();return;}
+if(a==="addcant"){CANT.push({mod:sendMod,ref:"",why:""});shell();return;}
 if(a==="fixed"){var t=REDO.filter(function(r){return r.state!=="done";})[0];
 if(t){t.state="done";t.did=t.did||"Done on board and signed by the officer.";}shell();}
 if(a==="open"){step=2;shell();}
 flash(SAY[a]||"Saved.");
 };
 });
+var pk=document.getElementById("pick");
+if(pk) pk.onchange=function(){sendMod=+pk.value;shell();};
+var ct=document.getElementById("count");
+if(ct) ct.oninput=function(){
+var max=mod(sendMod).tasks;
+if(ct.value!=="" && +ct.value>max) ct.value=max;
+if(ct.value!=="" && +ct.value<0) ct.value=0;
+me.mods[sendMod].declared = ct.value==="" ? null : Math.max(0,Math.min(max,+ct.value));
+var p=document.getElementById("pcnt"); if(p) p.textContent=pctText();
+};
 }
 function flash(msg){
 var d=document.createElement("div");
