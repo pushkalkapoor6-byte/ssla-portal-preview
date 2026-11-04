@@ -71,39 +71,47 @@ padding:12px 14px;margin-bottom:10px}
 place-items:center;font-weight:700;font-size:14px;flex:none}
 .redoitem{border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
 .said{background:var(--bg);border-radius:8px;padding:11px 13px;margin:9px 0;font-size:15px}
-.big{font-size:20px}
-.big h1{font-size:32px}.big h2{font-size:25px}.big h3{font-size:21px}
-.big .card{padding:26px}
-.big .btn{font-size:19px;padding:15px 30px;min-height:54px;min-width:170px;border-radius:9px}
-.big .btn.sm{font-size:17px;padding:11px 20px;min-width:0;min-height:46px}
-.big table{font-size:19px}
-.big th{font-size:16px}
-.big td{padding:18px 12px}
-.big input,.big textarea,.big select{font-size:19px;padding:13px 15px}
-.big label{font-size:17px}
-.big .hint{font-size:16px}
-.big .tag{font-size:16px;padding:5px 14px}
+.big{font-size:17px}
+.big h1{font-size:28px}.big h2{font-size:22px}.big h3{font-size:19px}
+.big .card{padding:22px}
+.big .btn{font-size:17px;padding:12px 24px;min-height:48px;min-width:150px;border-radius:9px}
+.big .btn.sm{font-size:15px;padding:9px 16px;min-width:0;min-height:42px}
+.big table{font-size:17px}
+.big th{font-size:15px}
+.big td{padding:16px 12px}
+.big input,.big textarea,.big select{font-size:17px;padding:11px 13px}
+.big label{font-size:15px}
+.big .hint{font-size:15px}
+.big .tag{font-size:15px;padding:4px 12px}
 .mentorlist tr td{border-top:2px solid var(--line)}
-.check{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
-.check>div:first-child{position:sticky;top:16px}
-@media(max-width:1000px){.check{grid-template-columns:1fr}
+.check{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+.check>div:first-child{position:sticky;top:12px}
+@media(max-width:1100px){.check{grid-template-columns:1fr}
 .check>div:first-child{position:static}}
-.viewer{background:#5b6670;border-radius:10px;min-height:560px;display:flex;flex-direction:column;
-align-items:center;justify-content:center;color:#fff;text-align:center;padding:24px}
-.sheet{background:#fff;color:var(--ink2);width:86%;min-height:420px;border-radius:4px;display:grid;
-place-items:center;font-size:19px;box-shadow:0 3px 14px rgba(0,0,0,.3)}
-.vbar{display:flex;gap:14px;align-items:center;justify-content:center;margin-top:18px;flex-wrap:wrap}
-.tasklist{max-height:none}
-.task{border:2px solid var(--line);border-radius:10px;padding:18px;margin-bottom:14px}
+.viewer{background:#5b6670;border-radius:10px;height:calc(100vh - 150px);min-height:540px;
+display:flex;flex-direction:column;color:#fff;padding:0;overflow:hidden}
+.vstage{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:18px}
+.sheet{background:#fff;color:var(--ink2);border-radius:3px;display:grid;place-items:center;
+font-size:17px;box-shadow:0 3px 14px rgba(0,0,0,.35);flex:none}
+.vbar{display:flex;gap:10px;align-items:center;justify-content:center;padding:11px;flex-wrap:wrap;
+background:#4a545d;border-radius:10px 10px 0 0;position:sticky;top:0;z-index:2}
+.vbtn{background:#eef1f3;color:#18222b;border:0;border-radius:7px;padding:9px 14px;font:inherit;
+font-size:15px;font-weight:600;cursor:pointer;min-height:42px}
+.vbtn:hover{background:#fff}
+.vsep{width:1px;height:26px;background:#6d7780}
+.zoomval{min-width:62px;text-align:center;font-size:16px;font-weight:650}
+.task{border:2px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
 .task.ok{border-color:#a9d6bd;background:#f6fbf8}
 .task.redo{border-color:#e8b3a3;background:#fdf7f5}
-.task .tref{font-weight:700;font-size:21px}
-.task .tt{color:var(--ink2);font-size:18px;margin-top:2px}
-.bigbtn{font-size:19px;padding:14px 26px;min-height:54px;border-radius:9px;border:2px solid var(--line);
-background:#fff;cursor:pointer;font-weight:650;font-family:inherit}
+.task .tref{font-weight:700;font-size:18px}
+.task .tt{color:var(--ink2);font-size:15px;margin-top:2px;line-height:1.4}
+.task .sheetline{font-size:15px;color:var(--ink2);margin:10px 0 4px}
+.bigbtn{font-size:16px;padding:11px 14px;min-height:46px;border-radius:8px;border:2px solid var(--line);
+background:#fff;cursor:pointer;font-weight:650;font-family:inherit;flex:1}
 .bigbtn.yes.on{background:var(--ok);border-color:var(--ok);color:#fff}
 .bigbtn.no.on{background:var(--redo);border-color:var(--redo);color:#fff}
-.progressline{font-size:20px;font-weight:650;padding:14px 0}
+.btnpair{display:flex;gap:8px}
+.progressline{font-size:18px;font-weight:650;padding:12px 0}
 </style>
 </head>
 <body>
@@ -170,7 +178,7 @@ function mod(i){for(var k=0;k<MODULES.length;k++)if(MODULES[k].id===i)return MOD
 var STATE={done:["Checked","t-ok"],checking:["With your mentor","t-wait"],
 waiting:["Waiting for ISF to allocate","t-wait"],doing:["You are on this one","t-none"],
 not:["Not started","t-none"]};
-var role="cand",step=1,sendMod=4,openModule=null;
+var role="cand",step=1,sendMod=4,openModule=null,zoom=100,sheetNo=1;
 var ROLES=[["cand","Candidate"],["mentor","Mentor"],["isf","ISF admin"],["co","Company"]];
 var STEPS={
 cand:[["Your ship","Fill this in first"],["Send a module","Attach your sheets"],
@@ -362,32 +370,43 @@ var list=DEMO.map(function(t){
 var m=marks[t.ref]||{};
 return '<div class="task '+(m.v==="ok"?"ok":m.v==="redo"?"redo":"")+'">'+
 '<div class="tref">'+E(t.ref)+'</div><div class="tt">'+E(t.t)+'</div>'+
-'<div class="rowline" style="margin:12px 0 14px">'+
-'<span style="font-size:18px;color:var(--ink2)">Candidate says: <b>sheet '+t.sheet+'</b></span>'+
-'<button class="btn ghost sm" data-act="goto" data-s="'+t.sheet+'">Go to sheet</button></div>'+
-'<div class="rowline">'+
+'<div class="sheetline">Candidate says: <b>sheet '+t.sheet+'</b></div>'+
+'<button class="btn ghost sm" style="width:100%;margin-bottom:10px" data-act="goto" data-s="'+
+t.sheet+'">Go to sheet '+t.sheet+'</button>'+
+'<div class="btnpair">'+
 '<button class="bigbtn yes '+(m.v==="ok"?"on":"")+'" data-act="mark" data-r="'+t.ref+
 '" data-v="ok">&#10003; OK</button>'+
 '<button class="bigbtn no '+(m.v==="redo"?"on":"")+'" data-act="mark" data-r="'+t.ref+
-'" data-v="redo">&#10007; Needs redo</button></div>'+
-(m.v==="redo"?'<div style="margin-top:14px"><label>What should he do again?</label>'+
-'<textarea rows="2" placeholder="He cannot ask you, so the comment has to stand on its own.">'+
+'" data-v="redo">&#10007; Redo</button></div>'+
+(m.v==="redo"?'<div style="margin-top:12px"><label>What should he do again?</label>'+
+'<textarea rows="3" placeholder="He cannot ask you, so the comment has to stand on its own.">'+
 E(m.c||"")+'</textarea></div>':'')+
-'<div style="margin-top:12px"><a href="#" data-act="whatcheck" style="font-size:17px">'+
+'<div style="margin-top:10px"><a href="#" data-act="whatcheck" style="font-size:15px">'+
 'What to check &#9656;</a></div></div>'}).join("");
+var sw=Math.round(520*zoom/100), sh=Math.round(sw*1.414);
 return '<div class="card"><div class="rowline"><div><h2>'+E(w.who)+' — Module '+w.mod+'</h2>'+
 '<p style="margin-top:4px">'+w.tasks+' tasks · '+w.sheets+' sheets · '+E(w.sslap)+'</p></div>'+
 '<span class="spacer"></span><button class="btn ghost" data-act="back">Back to my list</button>'+
 '</div><div class="progressline">'+done+' of '+DEMO.length+' checked'+
 (nredo?' · '+nredo+' marked for redo':'')+'</div></div>'+
-'<div class="check"><div><div class="viewer"><div class="sheet">'+
-'Sheet <b id="shno">1</b> of '+w.sheets+'<br><span style="font-size:16px;color:#99a2aa">'+
-"the candidate's scanned answer sheets</span></div>"+
-'<div class="vbar"><button class="btn ghost sm" data-act="prev">&#9664; Previous</button>'+
-'<span style="font-size:18px">Sheet <input id="shbox" value="1" style="width:90px;'+
-'text-align:center;display:inline-block"></span>'+
-'<button class="btn ghost sm" data-act="next">Next &#9654;</button></div></div>'+
-'<div class="note" style="margin-top:14px;font-size:17px">Open the <b>Module '+w.mod+
+'<div class="check"><div><div class="viewer">'+
+'<div class="vbar">'+
+'<button class="vbtn" data-act="prev">&#9664; Previous</button>'+
+'<span style="font-size:16px">Sheet <input id="shbox" value="'+sheetNo+'" style="width:72px;'+
+'text-align:center;display:inline-block;padding:7px;font-size:16px"> of '+w.sheets+'</span>'+
+'<button class="vbtn" data-act="next">Next &#9654;</button>'+
+'<span class="vsep"></span>'+
+'<button class="vbtn" data-act="zout">&minus;</button>'+
+'<span class="zoomval">'+zoom+'%</span>'+
+'<button class="vbtn" data-act="zin">+</button>'+
+'<button class="vbtn" data-act="zfit">Reset</button>'+
+'</div>'+
+'<div class="vstage"><div class="sheet" style="width:'+sw+'px;height:'+sh+'px">'+
+'<div>Sheet <b id="shno">'+sheetNo+'</b> of '+w.sheets+
+'<div style="font-size:15px;color:#99a2aa;margin-top:8px">the candidate&#39;s handwritten '+
+'answer sheets</div></div></div></div>'+
+'</div>'+
+'<div class="note" style="margin-top:12px;font-size:15px">Open the <b>Module '+w.mod+
 ' Check Document</b> to see what each task should contain. It opens in a new window and you can '+
 'search it by task number.</div></div>'+
 '<div class="tasklist">'+list+
@@ -508,18 +527,23 @@ if(a==="alloc"){var wid=b.dataset.w,mn=b.dataset.m;
 for(var k=0;k<WAITING.length;k++)if(WAITING[k].id===wid){WAITING.splice(k,1);break}
 shell();flash("Allocated to "+mn+". An email has gone to them.");return}
 if(a==="open"){openModule=b.dataset.i;shell();return}
-if(a==="back"){openModule=null;marks={};shell();return}
+if(a==="back"){openModule=null;marks={};sheetNo=1;zoom=100;shell();return}
 if(a==="mark"){var r=b.dataset.r,v=b.dataset.v;
 if(marks[r]&&marks[r].v===v){delete marks[r]}else{marks[r]={v:v,c:(marks[r]||{}).c||""}}
 shell();return}
 if(a==="goto"||a==="prev"||a==="next"){
-var box=document.getElementById("shbox"),lbl=document.getElementById("shno");
-var n=a==="goto"?+b.dataset.s:(+box.value||1)+(a==="next"?1:-1);
-if(n<1)n=1; box.value=n; lbl.textContent=n; return}
+var box=document.getElementById("shbox");
+var n=a==="goto"?+b.dataset.s:(+((box&&box.value))||sheetNo)+(a==="next"?1:-1);
+if(n<1)n=1; sheetNo=n; shell(); return}
+if(a==="zin"){zoom=Math.min(300,zoom+25);shell();return}
+if(a==="zout"){zoom=Math.max(50,zoom-25);shell();return}
+if(a==="zfit"){zoom=100;shell();return}
 flash(SAY[a]||"Saved.");
 }});
 var pk=document.getElementById("pick");
 if(pk)pk.onchange=function(){sendMod=+pk.value;shell()};
+var sb=document.getElementById("shbox");
+if(sb)sb.onchange=function(){var n=+sb.value||1;sheetNo=n<1?1:n;shell()};
 }
 function flash(m){var d=document.createElement("div");d.textContent=m;
 d.style.cssText="position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#13202b;"+
